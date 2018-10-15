@@ -1,0 +1,163 @@
+\documentclass[notes=no]{beamer}
+%\documentclass[notes=only]{beamer}
+%\documentclass[notes]{beamer}
+
+\usetheme[white, compactlogo]{Lilly}
+
+
+
+
+
+% begin definition
+\def\conas{\stackrel{a.s.} {\rightarrow}}         % conv. a.s.
+\def\conP{\stackrel{\cal P} {\rightarrow}}        % conv. in probability
+\def\conD{\stackrel{\cal D} {\rightsquigarrow}}        % conv. in distribution
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+\def\iid{\stackrel{ iid} {\sim}}          % i.i.d
+\def\hat{\widehat}
+\def\tilde{\widetilde}
+
+%general sets
+\def\cal{\mathcal}
+\def\calA{{\cal A}} %Action sets
+\def\calB{{\cal B}} %Bounded set
+\def\calC{{\cal C}} %Convex set
+\def\calH{{\cal H}} %Hilbert Space
+\def\calS{{\cal S}} %A regular set
+\def\calNr{{\cal N}_r} %Neighborhood
+\def\calX{{\cal X}} %Covariate space
+\def\calF{{\cal F}} %Function space
+
+\def\calD{{\cal D}} %decision rule
+
+
+%special sets
+\def\bbR{{\mathbb{R}}} %Real number
+\def\bbN{{\mathbb{N}}}%Natural number
+\def\bbQ{{\mathbb{Q}}} %Rational number
+\def\bbZ{{\mathbb{Z}}} %Integer
+
+%Matrix
+\def\bA{{\bf A}}
+\def\bB{{\bf B}}
+\def\bC{{\bf C}}
+\def\bD{{\bf D}}
+\def\bH{{\bf H}}
+\def\bI{{\bf I}}
+\def\bJ{{\bf J}}
+\def\bP{{\bf P}}
+\def\bT{{\bf T}}
+\def\bW{{\bf W}}
+\def\bX{{\bf X}}
+
+%vector
+\def\balpha{{\boldsymbol \alpha}}
+\def\bbeta{{\boldsymbol \beta}}
+\def\btheta{{\boldsymbol \theta}}
+
+\def\bzero{{\bf 0}}
+\def\bone{{\bf 1}}
+\def\bbf{{\bf f}}
+\def\br{{\bf r}}
+\def\by{{\bf y}}
+
+%notations
+\def\sign{{\mathrm{sign}}}
+\def\var{{\mathrm{var}}}
+\def\cov{{\mathrm{cov}}}
+\def\ind{\perp\!\!\!\perp}
+
+%others
+\def\mif{\mathrm{if}\ }
+\def\ow{\mathrm{otherwise}\ }
+\def\st{\mathrm{subject\ to}\quad }
+\def\diag{\mathrm{diag}}
+\def\minimize{\mathrm{minimize}\quad }
+\def\maximize{\mathrm{maximize}\quad }
+\def\dom{{\rm dom}}
+
+
+
+\title{On Missing Data}    % Enter your title between curly braces
+\author{Drafted by Haoda Fu, Ph.D.}                 % Enter your name between curly braces
+\institute{Statistics for Data Scientists Series}      % Enter your institute name between curly braces
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Why}
+		\begin{variableblock}{Why this topic is important}{bg=LillyGreen25,fg=black}{bg=LillyGreen75,fg=black}
+			Missing data are common problems for data scientists.
+		\end{variableblock}
+	\pause
+		\begin{variableblock}{Connections}{bg=LillyGreen25,fg=black}{bg=LillyGreen75,fg=black}
+			\begin{itemize}
+				\item Missing data and causal inference are closed connected and both are important to our digital health.
+				\item Different types of missing mechanism: missing completely at random, missing at random, and missing not at random.
+				\item Different methods to handle missing data.
+				\end{itemize}	
+	\end{variableblock}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Notation}
+	\begin{itemize}
+		\item $Y=(Y_{ij})$:  complete data matrix.
+		\item $M=(M_{ij})$: missing-data indicator matrix.
+		\item $\phi$: unknown parameter.
+		\item $Y_{obs}$ and $Y_{mis}$: the observed and missing components of $Y$.
+		\item  $f(\cdot)$: probability density function.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Missing Completely at Random (MCAR)}
+	
+	\begin{definition}[MCAR]
+		MCAR is defined that the $M$ does not depend on $Y$,
+		\begin{align*}
+		f(M | Y, \phi) &= f(M|\phi), \quad \forall Y, \phi.
+		\end{align*}
+     \end{definition}
+ 		Note:  this assumption does not mean that the pattern itself is random, but rather that the missingness does not depend on the data values. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Missing at Random (MAR)}
+	\begin{definition}[MAR]
+	MAR is defined that the $M$ only depends on $Y_{obs}$,
+	\begin{align*}
+	f(M | Y, \phi) &= f(M|Y_{obs}, \phi), \quad \forall Y_{obs}, \phi.
+	\end{align*}
+	\end{definition}
+	Note: This assumption is weaker than the MCAR and it is the most widely used assumption for clinical trials.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Missing Not at Random (MNAR)}
+	\begin{definition}[MNAR]
+	The mechanism is called MNAR if the distribution of $M$ depends on the $Y_{miss}$.	
+	\end{definition}
+Note: Assumptions are not verifiable. It is often used for robustness evaluation. Methods handle MNAR include pattern mixture models and selection models.	
+\end{frame}
+
+\begin{frame}
+	\frametitle{MAR and Analytics Essentials}
+	Let $\theta$ be the interest parameter, i.e. $f(Y|\theta) = f(Y_{obs}, Y_{mis}|\theta)$, and $\psi$ be the parameter for missing mechanisms. 
+	\begin{align*}
+	f(Y,M|\theta, \psi) &= f(Y|\theta) f(M|Y,\psi)\\
+	f(Y_{obs},M|\theta, \psi)&= \int f(Y_{obs}, Y_{mis}|\theta) f(M|Y_{obs}, Y_{mis},\psi) d Y_{mis} \\
+	&= f(M|Y_{obs}, \psi) \int f(Y_{obs},Y_{mis}|\theta) dY_{mis}\\
+	&= f(M|Y_{obs}, \psi) f(Y_{obs}|\theta)
+	\end{align*}
+Note: the third equation coming from MAR assumption.  This amazing results reflect the truth that we can simply estimate $\theta$ based on the observed values!!	
+\end{frame}
+
+\end{document}
