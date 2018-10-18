@@ -149,15 +149,16 @@ Note: Assumptions are not verifiable. It is often used for robustness evaluation
 \end{frame}
 
 \begin{frame}
-	\frametitle{MAR and Analytics Essentials}
-	Let $\theta$ be the interest parameter, i.e. $f(Y|\theta) = f(Y_{obs}, Y_{mis}|\theta)$, and $\psi$ be the parameter for missing mechanisms. 
-	\begin{align*}
-	f(Y,M|\theta, \psi) &= f(Y|\theta) f(M|Y,\psi)\\
-	f(Y_{obs},M|\theta, \psi)&= \int f(Y_{obs}, Y_{mis}|\theta) f(M|Y_{obs}, Y_{mis},\psi) d Y_{mis} \\
-	&= f(M|Y_{obs}, \psi) \int f(Y_{obs},Y_{mis}|\theta) dY_{mis}\\
-	&= f(M|Y_{obs}, \psi) f(Y_{obs}|\theta)
-	\end{align*}
-Note: the third equation coming from MAR assumption.  This amazing results reflect the truth that we can simply estimate $\theta$ based on the observed values!!	
+	\frametitle{Parametric Likelihood-Based Analysis Under MAR}
+		Let $\theta$ be the interest parameter, i.e. $f(Y|\theta) = f(Y_{obs}, Y_{mis}|\theta)$, and $\psi$ be the parameter for missing mechanisms. 
+			\begin{align*}
+		f(Y,M|\theta, \psi) &= f(Y|\theta) f(M|Y,\psi)\\
+		f(y_{obs},m|\theta, \psi)&= \int f(y_{obs}, Y_{mis}|\theta) f(m|y_{obs}, Y_{mis},\psi) d Y_{mis} \\
+		&= f(m|Y_{obs}, \psi) \int f(y_{obs},Y_{mis}|\theta) dY_{mis}\\
+		&\triangleq f(M|Y_{obs}, \psi) f(Y_{obs}|\theta)
+		\end{align*}
+Remarks: the lower case means the observed value. The $dY_{mis}$ can only be calculated when $M$ is observed. Also, $f(Y_{obs}|\theta)$ is not the same pdf as if we only observed iid data, so that we use $\triangleq$ notation instead of regular equal to, because we define  $f(Y_{obs}|\theta) = \int f(y_{obs},Y_{mis}|\theta) dY_{mis}$.		
 \end{frame}
+
 
 \end{document}
